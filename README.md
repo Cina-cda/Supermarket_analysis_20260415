@@ -15,12 +15,11 @@
 ### supermarket_analysis/
 ### │
 ### ├── data/ # 原始数据（需自行放置）
-#### │ ├── 20260415sales.csv
-#### │ ├── 20260415returns.csv
-#### │ └── 20260415inventory.csv
+#### │ ├── YYYYMMDDsales.csv
+#### │ ├── YYYYMMDDreturns.csv
+#### │ └── YYYYMMDDinventory.csv
 ### │
 ### ├── src/ # 核心 Python 模块
-#### │ ├── init.py
 #### │ ├── config.py # 配置（路径、参数）
 #### │ ├── data_loader.py # 数据加载与时间转换
 #### │ ├── preprocessing.py # 缺失值、异常值处理，计算列
@@ -102,7 +101,7 @@ FLOAT_DECIMALS：Excel 数字小数位数
 ### 注意事项
 原始数据文件必须放在 data/ 目录下，且文件名与代码中一致（或修改 config.py 中的文件名常量）。
 
-库存插值会生成完整日期序列（2022-01-01 至 2022-12-31），计算量随数据量增长。
+库存插值会生成完整日期序列，计算量随数据量增长。
 
 退货率计算时，仅考虑既有销售又有退货的商品（inner join）。
 
