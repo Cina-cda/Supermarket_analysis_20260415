@@ -38,7 +38,7 @@
 
 ## 环境要求
 
-- Python 3.8+
+- Python 3.12+
 - 依赖库：pandas, numpy, xlsxwriter
 
 ## 快速开始
