@@ -30,18 +30,28 @@ def interpolate_inventory(inventory: pd.DataFrame) -> pd.DataFrame:
 
     def fill_dates_for_group(df):
         """对单个 (store_id, product_id) 分组，补全日期并插值"""
+        store_id, product_id = df.name
         df = df.set_index('date').reindex(full_date)
-        # 填充 store_id 和 product_id（新日期行需要这些列）
-        df['store_id'] = df['store_id'].ffill()
-        df['product_id'] = df['product_id'].ffill()
+        # 填充 store_id 和 product_id
+        df['store_id'] = store_id
+        df['product_id'] = product_id
         return df
 
     # 按门店和商品分组，应用补全函数
     inventory_full = (
-        inventory.groupby(['store_id', 'product_id'])
-        .apply(fill_dates_for_group, include_groups=True)
-        .drop(columns=['store_id', 'product_id'])   # 避免重复列
+        inventory
+        .groupby(['store_id', 'product_id'])
+        .apply(fill_dates_for_group)
+        .reset_index(level=[0, 1], drop=True)  # 移除多余的索引层级
+        .reset_index()              # 将 date 从索引变回列
     )
     # 线性插值填充 stock_on_hand
-    inventory_full['stock_on_hand'] = inventory_full['stock_on_hand'].interpolate(method='linear')
+    inventory_full['stock_on_hand'] = (
+        inventory_full
+        .groupby(['store_id', 'product_id'])['stock_on_hand']
+        .transform(lambda x: x.interpolate(method='linear'))
+    )
+    # 日期列更名
+    inventory_full = inventory_full.rename(columns={'index': 'date'})
+
     return inventory_full
